@@ -1,14 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Body, Controller, Delete, Get, Param, Post, Put} from '@nestjs/common';
+import { AnimalsService } from './animals.service';
+import { AnimalDTO } from './dto/animal.dto';
+import { Animal, AnimalDocument } from './schemas/animal.schema';
 
 @Controller('animals')
 export class AnimalsController {
 
+    constructor(
+        private animalsService: AnimalsService
+    ) {}
+
     ANIMAL_ARRAY = ['cheetah', 'alligator', 'bunny', 'cat', 'dog'];
 
     @Get()
-    getAllAnimals(): string[] {
-        return this.ANIMAL_ARRAY;
+    getAllAnimals(): any {
+        return this.animalsService.findAll().catch((err) => {
+            console.log(err); // TODO: create custom exception handler
+        });
     }
 
     @Get(':index')
@@ -17,10 +25,10 @@ export class AnimalsController {
     }
 
     @Post()
-    addAnimal(@Body() body): string {
-        console.log(body);
-        this.ANIMAL_ARRAY.push(body.name);
-        return body.name;
+    addAnimal(@Body() body: AnimalDTO): any {
+        return this.animalsService.create(body).catch((err) => {
+            console.log(err); // TODO: create custom exception handler
+        });
     }
 
     @Put(':index')
