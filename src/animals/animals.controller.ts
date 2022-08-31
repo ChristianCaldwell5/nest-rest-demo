@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put} from '@nestjs/common';
 import { AnimalsService } from './animals.service';
 import { AnimalDTO } from './dto/animal.dto';
-import { Animal, AnimalDocument } from './schemas/animal.schema';
 
 @Controller('animals')
 export class AnimalsController {
@@ -10,8 +9,6 @@ export class AnimalsController {
         private animalsService: AnimalsService
     ) {}
 
-    ANIMAL_ARRAY = ['cheetah', 'alligator', 'bunny', 'cat', 'dog'];
-
     @Get()
     getAllAnimals(): any {
         return this.animalsService.findAll().catch((err) => {
@@ -19,9 +16,12 @@ export class AnimalsController {
         });
     }
 
-    @Get(':index')
-    getOneAnimal(@Param() params): string {
-        return this.ANIMAL_ARRAY[params.index];
+    @Get(':id')
+    getOneAnimal(@Param() params): any {
+        console.log(params.id)
+        return this.animalsService.findOne(params.id).catch((err) => {
+            console.log(err); // TODO: create custom exception handler
+        });
     }
 
     @Post()
@@ -31,16 +31,18 @@ export class AnimalsController {
         });
     }
 
-    @Put(':index')
-    updateAnimal(@Body() body, @Param() params): string {
-        this.ANIMAL_ARRAY[params.index] = body.name;
-        return body.name;
+    @Put()
+    updateAnimal(@Body() body): any {
+        return this.animalsService.fullUpdate(body).catch((err) => {
+            console.log(err); // TODO: create custom exception handler
+        })
     }
 
-    @Delete(':index')
-    deleteAnimal(@Param() params): string {
-        const animalDeleted = this.ANIMAL_ARRAY.splice(params.index, 1)
-        return animalDeleted[0];
+    @Delete(':id')
+    deleteAnimal(@Param() params): any {
+        return this.animalsService.deleteOne(params.id).catch((err) => {
+            console.log(err); // TODO: create custom exception handler
+        })
     }
 
 }

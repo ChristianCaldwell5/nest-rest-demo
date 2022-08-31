@@ -16,4 +16,16 @@ export class AnimalsService {
   async findAll(): Promise<Animal[]> {
     return this.animalModel.find().lean();
   }
+
+  async findOne(id: string): Promise<Animal> {
+    return this.animalModel.findOne({_id: id}).lean();
+  }
+
+  async fullUpdate(animal: Animal): Promise<any> {
+    return this.animalModel.updateOne({name: animal.name}, animal);
+  }
+
+  async deleteOne(id: string): Promise<any> {
+    return this.animalModel.deleteOne({_id: id});
+  }
 }
